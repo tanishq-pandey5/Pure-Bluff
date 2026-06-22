@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pure Bluff – Bluff. Strategize. Win.</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #f0a500;
+  --gold-light: #ffd060;
+  --gold-dark: #c47d00;
+  --green-felt: #1a5c2e;
+  --green-dark: #0d3318;
+  --green-mid: #1e6b35;
+  --bg-dark: #0a0f0d;
+  --bg-card: #111a14;
+  --bg-card2: #162019;
+  --border: #2a3d2e;
+  --border-gold: #4a3800;
+  --text: #e8e0cc;
+  --text-dim: #7a8a7a;
+  --red: #e03030;
+  --blue: #2a7ae0;
+  --radius: 14px;
+  --shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ══════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════ */
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  height: 64px;
+  background: linear-gradient(90deg, #0a0f0d 0%, #111a14 100%);
+  border-bottom: 1px solid var(--border-gold);
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Cinzel', serif; font-size: 1.5rem;
+}
+.nav-logo .suit { font-size: 1.8rem; color: var(--gold); }
+.nav-logo .name span { color: var(--gold); font-weight: 900; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a {
+  font-size: .95rem; font-weight: 600; letter-spacing: .06em;
+  color: var(--text-dim); text-decoration: none; transition: color .2s;
+  cursor: pointer;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--gold); }
+.nav-links a.active { border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.user-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg-card2); border: 1px solid var(--border-gold);
+  border-radius: 40px; padding: 4px 14px 4px 4px;
+}
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: .85rem; color: #000;
+}
+.user-coins { font-size: .85rem; color: var(--gold); font-weight: 600; }
+.coin-icon { color: var(--gold); }
+
+/* ══════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════ */
+.main-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+  min-height: calc(100vh - 64px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.btn-create {
+  background: linear-gradient(135deg, #1d7a35, #28a045);
+  border: none; border-radius: 10px;
+  color: #fff; font-family: 'Rajdhani', sans-serif;
+  font-size: .95rem; font-weight: 700; letter-spacing: .06em;
+  padding: 12px 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all .2s; width: 100%;
+  box-shadow: 0 4px 16px rgba(30,160,60,.3);
+}
+.btn-create:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(30,160,60,.5); }
+
+.sidebar-section h4 {
+  font-size: .7rem; letter-spacing: .12em; color: var(--text-dim);
+  text-transform: uppercase; margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.table-list { display: flex; flex-direction: column; gap: 6px; }
+.table-item {
+  padding: 8px 10px; border-radius: 8px;
+  border: 1px solid var(--border);
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.table-item:hover { border-color: var(--gold-dark); background: var(--bg-card2); }
+.table-item.active { border-color: var(--gold); background: rgba(240,165,0,.08); }
+.table-name { font-weight: 600; font-size: .9rem; }
+.table-meta { font-size: .75rem; color: var(--text-dim); }
+.table-count { font-size: .8rem; color: var(--gold); font-weight: 600; }
+
+.quick-join { display: flex; flex-direction: column; gap: 8px; }
+.qj-btn {
+  padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card2); cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-weight: 600;
+  font-size: .9rem; color: var(--text);
+  transition: all .2s; text-align: left;
+}
+.qj-btn:hover { border-color: var(--gold-dark); color: var(--gold); }
+.qj-btn small { display: block; font-size: .75rem; color: var(--text-dim); font-weight: 400; }
+.qj-btn.green { background: linear-gradient(135deg,#1d7a35,#28a045); border-color: transparent; color: #fff; }
+.qj-btn.green small { color: rgba(255,255,255,.7); }
+
+.refer-box {
+  background: linear-gradient(135deg, rgba(240,165,0,.12), rgba(240,165,0,.04));
+  border: 1px solid var(--border-gold);
+  border-radius: 10px; padding: 14px; text-align: center;
+}
+.refer-box h5 { color: var(--gold); font-size: .9rem; margin-bottom: 4px; }
+.refer-box p { font-size: .78rem; color: var(--text-dim); margin-bottom: 10px; }
+.btn-invite {
+  background: transparent; border: 1px solid var(--gold);
+  color: var(--gold); border-radius: 6px;
+  padding: 6px 16px; cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-weight: 600;
+  font-size: .8rem; letter-spacing: .06em; transition: all .2s;
+}
+.btn-invite:hover { background: var(--gold); color: #000; }
+
+/* ══════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════ */
+.content-area { display: flex; flex-direction: column; }
+
+/* ── TABLE INFO BAR ── */
+.table-bar {
+  display: flex; align-items: center; gap: 28px;
+  padding: 10px 24px;
+  background: var(--bg-card2);
+  border-bottom: 1px solid var(--border);
+  font-size: .85rem; font-weight: 600;
+}
+.table-bar .tbi { display: flex; align-items: center; gap: 6px; }
+.table-bar .tbi label { color: var(--text-dim); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
+.table-bar .tbi span { color: var(--text); }
+.timer-chip {
+  margin-left: auto; display: flex; align-items: center; gap: 6px;
+  background: rgba(240,165,0,.15); border: 1px solid var(--gold-dark);
+  border-radius: 20px; padding: 4px 12px;
+  font-family: 'Orbitron', monospace; font-size: .9rem; color: var(--gold);
+}
+
+/* ══════════════════════════════════════
+   POKER TABLE
+══════════════════════════════════════ */
+.table-container {
+  padding: 20px 24px;
+  background: linear-gradient(180deg, #0d1a10 0%, #081008 100%);
+  flex-shrink: 0;
+}
+.poker-table {
+  position: relative;
+  width: 100%; max-width: 820px; margin: 0 auto;
+  aspect-ratio: 820/460;
+}
+/* Felt oval */
+.felt-oval {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, #1f7038 0%, #145228 40%, #0d3a1e 75%, #091e10 100%);
+  border-radius: 50%;
+  border: 6px solid #0a1c0d;
+  box-shadow:
+    inset 0 0 60px rgba(0,0,0,.5),
+    0 0 0 8px #1a2e1c,
+    0 0 0 12px #0d1a10,
+    0 20px 60px rgba(0,0,0,.8);
+}
+/* Rail */
+.felt-oval::before {
+  content: '';
+  position: absolute; inset: -14px;
+  border-radius: 50%;
+  border: 8px solid #3d2800;
+  background: transparent;
+}
+.table-logo {
+  position: absolute; left: 50%; top: 44%; transform: translate(-50%,-50%);
+  font-family: 'Cinzel', serif; font-size: 1.6rem; font-weight: 900;
+  color: rgba(240,165,0,.18); letter-spacing: .15em;
+  white-space: nowrap; pointer-events: none;
+  text-shadow: 0 0 40px rgba(240,165,0,.1);
+}
+
+/* Deck in center */
+.center-deck {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  display: flex; align-items: center; justify-content: center;
+}
+.deck-stack {
+  width: 50px; height: 66px; position: relative;
+}
+.deck-stack .card {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #1a2e1c, #0d1e10);
+  border: 2px solid var(--gold-dark);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.6);
+}
+.deck-stack .card:nth-child(1) { transform: rotate(-3deg) translate(-3px,2px); }
+.deck-stack .card:nth-child(2) { transform: rotate(1deg) translate(2px,-1px); }
+.deck-stack .card:nth-child(3) { transform: rotate(0deg); background: linear-gradient(135deg, #1e3520, #142816); }
+.deck-stack .card:nth-child(3)::after {
+  content: '♠'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; color: rgba(240,165,0,.4);
+}
+
+/* Current bid display */
+.current-bid {
+  position: absolute; right: 22%; top: 48%;
+  background: rgba(10,15,12,.92); border: 1px solid var(--gold-dark);
+  border-radius: 10px; padding: 8px 14px; text-align: center;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+}
+.current-bid .bid-label { font-size: .65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; }
+.current-bid .bid-val { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: var(--gold); margin-top: 2px; }
+
+/* Player seats */
+.seat {
+  position: absolute;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+.seat.active .seat-avatar { box-shadow: 0 0 0 3px var(--gold), 0 0 20px rgba(240,165,0,.5); animation: pulse 1.5s infinite; }
+.seat.folded { opacity: .4; }
+.seat.you .seat-avatar { border-color: var(--gold); }
+
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 3px var(--gold), 0 0 20px rgba(240,165,0,.5); }
+  50% { box-shadow: 0 0 0 5px var(--gold), 0 0 30px rgba(240,165,0,.7); }
+}
+
+.seat-avatar {
+  width: 54px; height: 54px; border-radius: 50%;
+  border: 3px solid var(--border);
+  background: linear-gradient(135deg, #1a3020, #0d1a10);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; font-weight: 700;
+  position: relative; overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,.6);
+  color: var(--gold);
+}
+.dealer-btn {
+  position: absolute; top: -4px; right: -4px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--gold); color: #000;
+  font-size: .6rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+.seat-name { font-size: .75rem; font-weight: 700; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.9); white-space: nowrap; }
+.seat-coins { font-size: .7rem; color: var(--gold); font-weight: 600; }
+.seat-cards { display: flex; gap: 2px; }
+.mini-card {
+  width: 22px; height: 30px; border-radius: 3px;
+  background: linear-gradient(135deg, #1e3525, #132218);
+  border: 1px solid var(--gold-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; box-shadow: 0 2px 6px rgba(0,0,0,.5);
+}
+.mini-card.revealed { background: #fff; color: #000; font-size: .7rem; border-color: var(--gold); }
+
+/* Seat positions (% of table) */
+/* Seat positions for 6-player mode */
+.seat-p6-0  { left: 50%;  top: 8%;  }  /* top center */
+.seat-p6-1  { left: 82%;  top: 22%; }  /* top right */
+.seat-p6-2  { left: 90%;  top: 60%; }  /* right */
+.seat-p6-3  { left: 50%;  top: 90%; }  /* bottom center (you) */
+.seat-p6-4  { left: 10%;  top: 60%; }  /* left */
+.seat-p6-5  { left: 18%;  top: 22%; }  /* top left */
+
+/* Seat positions for 10-player mode */
+.seat-p10-0  { left: 50%;  top: 8%;  }  /* top center */
+.seat-p10-1  { left: 72%;  top: 13%; }  /* upper right-center */
+.seat-p10-2  { left: 88%;  top: 30%; }  /* upper right */
+.seat-p10-3  { left: 90%;  top: 60%; }  /* lower right */
+.seat-p10-4  { left: 72%;  top: 85%; }  /* bottom right */
+.seat-p10-5  { left: 50%;  top: 90%; }  /* bottom center (you) */
+.seat-p10-6  { left: 28%;  top: 85%; }  /* bottom left */
+.seat-p10-7  { left: 10%;  top: 60%; }  /* lower left */
+.seat-p10-8  { left: 12%;  top: 30%; }  /* upper left */
+.seat-p10-9  { left: 28%;  top: 13%; }  /* upper left-center */
+
+/* ── YOUR HAND ── */
+.your-hand {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 10px 24px;
+  background: linear-gradient(180deg, #081008 0%, #0a0f0d 100%);
+  flex-wrap: wrap; min-height: 70px;
+}
+.hand-card {
+  width: 44px; height: 60px; border-radius: 7px;
+  background: #fff; border: 2px solid #e0e0e0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: .85rem; font-weight: 700; cursor: pointer;
+  transition: all .2s; box-shadow: 0 3px 10px rgba(0,0,0,.5);
+  position: relative; user-select: none;
+}
+.hand-card:hover { transform: translateY(-8px); box-shadow: 0 8px 20px rgba(0,0,0,.6); }
+.hand-card.selected { transform: translateY(-12px); border-color: var(--gold); box-shadow: 0 8px 20px rgba(240,165,0,.4); }
+.hand-card.red { color: #d40; }
+.hand-card.black { color: #111; }
+.hand-label { font-size: .6rem; position: absolute; top: 2px; left: 3px; line-height: 1; }
+.hand-suit { font-size: 1.1rem; }
+
+/* ══════════════════════════════════════
+   ACTION BAR
+══════════════════════════════════════ */
+.action-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 24px;
+  background: var(--bg-card2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.btn-action {
+  padding: 12px 28px; border: none; border-radius: 8px;
+  font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700;
+  letter-spacing: .1em; cursor: pointer; transition: all .2s;
+  text-transform: uppercase;
+}
+.btn-fold   { background: #c0212180; border: 2px solid #c02121; color: #ff6060; }
+.btn-fold:hover:not(:disabled) { background: #c02121; color: #fff; }
+.btn-check  { background: #1a7a3080; border: 2px solid #1a7a30; color: #60ff80; }
+.btn-check:hover:not(:disabled) { background: #1a7a30; color: #fff; }
+.btn-bluff  { background: rgba(240,165,0,.15); border: 2px solid var(--gold-dark); color: var(--gold); }
+.btn-bluff:hover:not(:disabled) { background: var(--gold); color: #000; }
+.btn-action:disabled { opacity: .35; cursor: not-allowed; }
+
+.bid-controls {
+  display: flex; align-items: center; gap: 8px; margin-left: auto;
+}
+.bid-label-bar { font-size: .8rem; color: var(--text-dim); }
+.bid-selector {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px;
+}
+.bid-val-display {
+  font-family: 'Orbitron', monospace; font-size: .9rem; color: var(--gold);
+  min-width: 80px; text-align: center;
+}
+.bid-btn {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--bg-card2); border: 1px solid var(--border);
+  color: var(--text); font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.bid-btn:hover { border-color: var(--gold-dark); color: var(--gold); }
+.btn-blind {
+  background: rgba(42,122,224,.15); border: 2px solid #2a7ae0; color: #60a0ff;
+  padding: 12px 20px; border-radius: 8px; cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: .9rem;
+  letter-spacing: .08em; transition: all .2s;
+}
+.btn-blind:hover:not(:disabled) { background: #2a7ae0; color: #fff; }
+.btn-blind:disabled { opacity: .35; cursor: not-allowed; }
+
+/* ══════════════════════════════════════
+   BOTTOM INFO
+══════════════════════════════════════ */
+.bottom-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+.info-panel {
+  padding: 24px; border-right: 1px solid var(--border);
+}
+.info-panel:last-child { border-right: none; }
+.info-panel h3 {
+  font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700;
+  color: var(--gold); margin-bottom: 14px; letter-spacing: .06em;
+}
+.rule-item { display: flex; gap: 10px; margin-bottom: 10px; font-size: .82rem; line-height: 1.5; }
+.rule-icon { color: var(--gold); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.rule-item strong { color: var(--gold-light); }
+.rule-text { color: var(--text-dim); }
+
+.game-info-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+.game-info-table tr td { padding: 7px 0; border-bottom: 1px solid var(--border); }
+.game-info-table tr:last-child td { border-bottom: none; }
+.game-info-table td:first-child { color: var(--gold); font-weight: 600; width: 45%; }
+.game-info-table td:last-child { color: var(--text); }
+
+.game-log { display: flex; flex-direction: column; gap: 8px; }
+.log-entry {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px; border-radius: 8px;
+  background: var(--bg-card2); border: 1px solid var(--border);
+  font-size: .8rem;
+}
+.log-avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--green-mid), var(--green-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 700; color: var(--gold);
+}
+.log-body { flex: 1; }
+.log-name { font-weight: 700; color: var(--text); }
+.log-action { color: var(--text-dim); }
+.log-action.success { color: #40c060; }
+.log-action.fail { color: var(--red); }
+.log-time { font-size: .7rem; color: var(--text-dim); margin-top: 2px; }
+.badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: .68rem; font-weight: 700; margin-left: 4px; }
+.badge.success { background: rgba(40,160,70,.3); color: #40c060; }
+.badge.fail { background: rgba(200,40,40,.3); color: #ff6060; }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 30px 40px;
+  display: grid; grid-template-columns: 1fr auto auto auto 1fr;
+  gap: 40px;
+}
+.footer-brand .name { font-family: 'Cinzel', serif; font-size: 1.2rem; }
+.footer-brand .name span { color: var(--gold); }
+.footer-brand .tagline { font-size: .8rem; color: var(--text-dim); margin-top: 4px; }
+.footer-col h6 { font-size: .75rem; letter-spacing: .1em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px; }
+.footer-col a { display: block; font-size: .82rem; color: var(--text-dim); text-decoration: none; margin-bottom: 6px; transition: color .2s; }
+.footer-col a:hover { color: var(--gold); }
+.footer-secure { font-size: .78rem; color: var(--text-dim); max-width: 180px; line-height: 1.5; }
+.footer-secure strong { color: var(--gold); display: block; margin-bottom: 4px; }
+
+/* ══════════════════════════════════════
+   MODAL OVERLAYS
+══════════════════════════════════════ */
+.modal-bg {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,.85); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.modal-bg.visible { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg-card); border: 1px solid var(--border-gold);
+  border-radius: 18px; padding: 32px;
+  max-width: 460px; width: 90%;
+  box-shadow: 0 20px 80px rgba(0,0,0,.8);
+  transform: translateY(20px); transition: transform .25s;
+}
+.modal-bg.visible .modal { transform: translateY(0); }
+.modal h2 { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--gold); margin-bottom: 6px; }
+.modal p { font-size: .9rem; color: var(--text-dim); margin-bottom: 20px; }
+.modal-options { display: flex; gap: 12px; margin-bottom: 20px; }
+.modal-opt {
+  flex: 1; padding: 14px; border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--bg-card2); cursor: pointer;
+  text-align: center; transition: all .2s;
+}
+.modal-opt:hover, .modal-opt.selected { border-color: var(--gold); background: rgba(240,165,0,.08); }
+.modal-opt .opt-num { font-family: 'Orbitron', monospace; font-size: 1.5rem; color: var(--gold); }
+.modal-opt .opt-label { font-size: .8rem; color: var(--text-dim); margin-top: 4px; }
+.modal-input {
+  width: 100%; padding: 10px 14px;
+  background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-family: 'Rajdhani', sans-serif; font-size: .95rem;
+  margin-bottom: 14px;
+}
+.modal-input:focus { outline: none; border-color: var(--gold-dark); }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-cancel {
+  padding: 10px 20px; border-radius: 8px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-dim); cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: .9rem;
+}
+.btn-submit {
+  padding: 10px 24px; border-radius: 8px;
+  background: linear-gradient(135deg, #1d7a35, #28a045);
+  border: none; color: #fff; cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: .9rem;
+}
+.btn-submit:hover { filter: brightness(1.1); }
+
+/* ── RESULT MODAL ── */
+.result-modal { text-align: center; }
+.result-icon { font-size: 3rem; margin-bottom: 12px; }
+.result-modal h2 { font-size: 1.8rem; margin-bottom: 8px; }
+.result-modal .result-msg { font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+
+/* ── CHALLENGE MODAL ── */
+.challenge-cards {
+  display: flex; gap: 8px; justify-content: center;
+  flex-wrap: wrap; margin: 16px 0;
+}
+.challenge-card-reveal {
+  width: 52px; height: 72px; border-radius: 8px;
+  background: #fff; border: 2px solid var(--gold);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 1.1rem; font-weight: 700;
+  animation: flipIn .4s ease both;
+}
+.challenge-card-reveal.red { color: #d40; }
+@keyframes flipIn {
+  from { transform: rotateY(90deg) scale(.8); opacity: 0; }
+  to   { transform: rotateY(0) scale(1); opacity: 1; }
+}
+
+/* ── STATUS BANNER ── */
+.status-banner {
+  position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+  background: var(--bg-card); border: 1px solid var(--gold-dark);
+  border-radius: 10px; padding: 12px 24px;
+  font-weight: 600; font-size: .95rem; color: var(--gold);
+  z-index: 150; box-shadow: var(--shadow);
+  transition: opacity .3s; pointer-events: none; opacity: 0;
+}
+.status-banner.show { opacity: 1; }
+
+/* ── CTA STRIP ── */
+.cta-strip {
+  text-align: center; padding: 28px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card2);
+}
+.cta-strip h3 { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: 4px; }
+.cta-strip p { font-size: .85rem; color: var(--text-dim); margin-bottom: 16px; }
+.cta-actions { display: flex; gap: 12px; justify-content: center; }
+.btn-cta-green {
+  padding: 12px 28px; border-radius: 8px;
+  background: linear-gradient(135deg, #1d7a35, #28a045);
+  border: none; color: #fff; cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: .95rem;
+  letter-spacing: .06em; transition: all .2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-cta-gold {
+  padding: 12px 28px; border-radius: 8px;
+  background: rgba(240,165,0,.12); border: 1px solid var(--gold);
+  color: var(--gold); cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: .95rem;
+  letter-spacing: .06em; transition: all .2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-cta-green:hover { filter: brightness(1.1); transform: translateY(-2px); }
+.btn-cta-gold:hover { background: var(--gold); color: #000; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 30px; right: 30px;
+  background: var(--bg-card); border: 1px solid var(--border-gold);
+  border-radius: 10px; padding: 12px 18px;
+  font-size: .88rem; color: var(--text);
+  z-index: 300; max-width: 280px;
+  transform: translateX(120%); transition: transform .3s;
+  box-shadow: var(--shadow);
+}
+.toast.show { transform: translateX(0); }
+
+/* ── Leaderboard ── */
+.leaderboard-section {
+  padding: 30px 24px;
+}
+.leaderboard-section h2 { font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--gold); margin-bottom: 18px; }
+.lb-table { width: 100%; border-collapse: collapse; }
+.lb-table th { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+.lb-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,.04); font-size: .88rem; }
+.lb-table tr:hover td { background: rgba(255,255,255,.02); }
+.lb-rank { font-family: 'Orbitron', monospace; color: var(--gold); font-size: .9rem; }
+.lb-name { font-weight: 600; }
+.lb-coins { color: var(--gold); font-weight: 600; }
+.lb-wins { color: #40c070; }
+
+/* page sections */
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+/* ── AUTHENTICATION OVERLAY ── */
+.auth-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at center, #14221a 0%, #060b08 100%);
+  z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .4s ease;
+}
+.auth-card {
+  background: var(--bg-card); border: 2px solid var(--border-gold);
+  border-radius: 16px; padding: 32px; width: 100%; max-width: 360px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.8);
+}
+.auth-logo {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Cinzel', serif; font-size: 1.8rem; margin-bottom: 20px;
+}
+.auth-logo .suit { font-size: 2.2rem; color: var(--gold); }
+.auth-logo .name span { color: var(--gold); font-weight: 900; }
+.auth-card h3 {
+  font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700;
+  letter-spacing: .08em; color: var(--gold-light); margin-bottom: 20px;
+  text-transform: uppercase; text-align: center;
+}
+.auth-tabs {
+  display: flex; border-bottom: 1px solid var(--border); margin-bottom: 24px;
+}
+.auth-tab {
+  flex: 1; padding: 10px; background: none; border: none;
+  font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700;
+  color: var(--text-dim); cursor: pointer; transition: all .2s;
+  border-bottom: 2px solid transparent;
+}
+.auth-tab:hover, .auth-tab.active { color: var(--gold); }
+.auth-tab.active { border-bottom-color: var(--gold); }
+.auth-label {
+  display: block; text-align: left; font-size: .8rem; color: var(--text-dim);
+  margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em;
+}
+.auth-input {
+  width: 100%; background: var(--bg-card2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; color: var(--text);
+  font-family: inherit; font-size: .95rem; box-sizing: border-box;
+}
+.auth-input:focus { outline: none; border-color: var(--gold-dark); }
+</style>
+</head>
+<body>
+
+<!-- ══ AUTHENTICATION OVERLAY ══ -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <span class="suit">♠</span>
+      <span class="name">PURE <span>BLUFF</span></span>
+    </div>
+    <h3 id="authTitle">LOG IN TO PLAY</h3>
+    
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">LOGIN</button>
+      <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">SIGN UP</button>
+    </div>
+
+    <form id="authForm" onsubmit="handleAuthSubmit(event)">
+      <div style="margin-bottom:14px">
+        <label class="auth-label">Username</label>
+        <input class="auth-input" id="authUsername" type="text" placeholder="Enter username" required>
+      </div>
+      
+      <div style="margin-bottom:14px">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" id="authPassword" type="password" placeholder="Enter password" required>
+      </div>
+
+      <div style="margin-bottom:18px;display:none" id="avatarSelectorContainer">
+        <label class="auth-label">Choose Avatar Initials (2 letters)</label>
+        <input class="auth-input" id="authAvatar" type="text" placeholder="e.g. AC" maxlength="2" value="AC">
+      </div>
+
+      <div id="authError" style="color:var(--red);font-size:.85rem;margin-bottom:12px;display:none;text-align:center"></div>
+
+      <button class="btn-submit" style="width:100%;padding:12px;font-size:1rem;cursor:pointer" type="submit" id="authSubmitBtn">LOG IN</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-logo">
+    <span class="suit">♠</span>
+    <span class="name">PURE <span>BLUFF</span></span>
+  </div>
+  <div class="nav-links">
+    <a class="active" onclick="showPage('home')">HOME</a>
+    <a onclick="showPage('lobby')">LOBBY</a>
+    <a onclick="showPage('howto')">HOW TO PLAY</a>
+    <a onclick="showPage('leaderboard')">LEADERBOARD</a>
+    <a onclick="showPage('support')">SUPPORT</a>
+  </div>
+  <div class="nav-right" style="gap:12px">
+    <div class="user-chip">
+      <div class="user-avatar" id="userAvatarNav">AC</div>
+      <span id="userNameNav">AceMaster</span>
+      <span class="user-coins">🪙 <span id="userCoinsNav">12,450</span></span>
+    </div>
+    <button onclick="handleLogout()" style="background:none;border:1px solid #c02121;color:#ff6060;border-radius:20px;padding:5px 12px;font-size:0.75rem;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:0.05em;transition:all 0.2s">LOGOUT</button>
+  </div>
+</nav>
+
+<!-- ══ STATUS BANNER ══ -->
+<div class="status-banner" id="statusBanner"></div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════
+     PAGE: HOME (GAME)
+══════════════════════════════════════ -->
+<div class="page-section active" id="page-home">
+  <div class="main-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <button class="btn-create" onclick="openCreateModal()">+ CREATE TABLE</button>
+
+      <div class="sidebar-section">
+        <h4>Join Table <span style="cursor:pointer" onclick="refreshTables()">↻</span></h4>
+        <div class="table-list" id="tableList"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <h4>Quick Join</h4>
+        <div class="quick-join">
+          <button class="qj-btn green" onclick="quickJoin(6,1)">
+            6 PLAYERS
+            <small>1 DECK</small>
+          </button>
+          <button class="qj-btn" onclick="quickJoin(10,2)">
+            10 PLAYERS
+            <small>2 DECKS</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="refer-box">
+        <h5>🪙 REFER &amp; EARN</h5>
+        <p>Invite your friends and earn bonus coins!</p>
+        <button class="btn-invite" onclick="showToast('Referral link copied! Share with friends.')">INVITE NOW</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="content-area">
+
+      <!-- TABLE BAR -->
+      <div class="table-bar">
+        <div class="tbi"><label>TABLE</label><span id="tbTableName">ACE TABLE</span></div>
+        <div class="tbi"><label>PLAYERS</label><span id="tbPlayers">1 / 6</span></div>
+        <div class="tbi"><label>DECKS</label><span id="tbDecks">1</span></div>
+        <div class="tbi"><label>MIN BET</label><span id="tbMinBet">2K</span></div>
+        <div class="tbi"><label>ROUND</label><span id="tbRound">–</span></div>
+        <div class="timer-chip">⏱ <span id="timerDisplay">–</span></div>
+      </div>
+
+      <!-- POKER TABLE -->
+      <div class="table-container">
+        <div class="poker-table" id="pokerTable">
+          <div class="felt-oval"></div>
+          <div class="table-logo">PURE BLUFF</div>
+          <!-- Seats rendered by JS -->
+          <div class="center-deck">
+            <div class="deck-stack">
+              <div class="card"></div>
+              <div class="card"></div>
+              <div class="card"></div>
+            </div>
+          </div>
+          <div class="current-bid" id="currentBidDisplay" style="display:none">
+            <div class="bid-label">CURRENT BID</div>
+            <div class="bid-val" id="currentBidVal">–</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- YOUR HAND -->
+      <div class="your-hand" id="yourHand">
+        <span style="color:var(--text-dim);font-size:.85rem">Join or create a table to start playing</span>
+      </div>
+
+      <!-- ACTION BAR -->
+      <div class="action-bar">
+        <button class="btn-action btn-fold"  id="btnFold"  onclick="playerFold()"   disabled>FOLD</button>
+        <button class="btn-action btn-check" id="btnCheck" onclick="playerChallenge()" disabled>CHALLENGE</button>
+        <button class="btn-action btn-bluff" id="btnBluff" onclick="playerBid()"  disabled>PLACE BID</button>
+        <div class="bid-controls">
+          <span class="bid-label-bar">BID:</span>
+          <div class="bid-selector">
+            <button class="bid-btn" onclick="adjQty(-1)">−</button>
+            <span class="bid-val-display" id="bidDisplay">5 × ♠</span>
+            <button class="bid-btn" onclick="adjQty(1)">+</button>
+          </div>
+          <div class="bid-selector" style="margin-left:6px">
+            <button class="bid-btn" onclick="adjRank(-1)">−</button>
+            <span class="bid-val-display" id="rankDisplay">A</span>
+            <button class="bid-btn" onclick="adjRank(1)">+</button>
+          </div>
+          <button class="btn-blind" id="btnBlind" onclick="playerBid()" disabled>PLACE BID</button>
+        </div>
+      </div>
+
+      <!-- BOTTOM GRID -->
+      <div class="bottom-grid">
+        <!-- HOW TO PLAY -->
+        <div class="info-panel">
+          <h3>HOW TO PLAY</h3>
+          <p style="font-size:.8rem;color:var(--text-dim);margin-bottom:12px">Pure Bluff is a classic multiplayer card game of strategy, memory, and deception.</p>
+          <div class="rule-item"><span class="rule-icon">🎯</span><div><strong>Goal</strong><div class="rule-text">Be the last player with cards.</div></div></div>
+          <div class="rule-item"><span class="rule-icon">👥</span><div><strong>Players</strong><div class="rule-text">2–6 players with 1 deck; 7–10 players with 2 decks.</div></div></div>
+          <div class="rule-item"><span class="rule-icon">🃏</span><div><strong>Card Rank (High→Low)</strong><div class="rule-text">A K Q J 10 9 8 7 6 5 4 3 2</div></div></div>
+          <div class="rule-item"><span class="rule-icon">🔄</span><div><strong>Gameplay</strong><div class="rule-text">Players take turns placing bids (e.g. 5× Ace). Each bid must be higher in rank or quantity.</div></div></div>
+          <div class="rule-item"><span class="rule-icon">⚡</span><div><strong>Challenge</strong><div class="rule-text">Call BLUFF if you think the bid is fake. Cards are revealed.</div></div></div>
+          <div class="rule-item"><span class="rule-icon">🏆</span><div><strong>Win / Lose</strong><div class="rule-text">If bid is true, challenger picks up all cards. If false, bidder picks up all cards.</div></div></div>
+          <button class="btn-invite" style="margin-top:12px;width:100%" onclick="showPage('howto')">VIEW DETAILED RULES</button>
+        </div>
+
+        <!-- GAME INFO -->
+        <div class="info-panel">
+          <h3>GAME INFO</h3>
+          <table class="game-info-table">
+            <tr><td>Game Type</td><td>Bluff</td></tr>
+            <tr><td>Max Players</td><td id="giMaxPlayers">6 with 1 Deck</td></tr>
+            <tr><td>Deck</td><td>Standard Cards</td></tr>
+            <tr><td>Card Rank</td><td>A K Q J 10 9 8 7 6 5 4 3 2</td></tr>
+            <tr><td>Turn Timer</td><td>15 Seconds</td></tr>
+            <tr><td>Bluff Rule</td><td>You can challenge any bid except the first.</td></tr>
+            <tr><td>Jump Rule</td><td>You can jump bid by increasing rank or quantity.</td></tr>
+            <tr><td>Status</td><td id="giStatus" style="color:#40c070">Waiting...</td></tr>
+          </table>
+          <button class="btn-invite" style="margin-top:16px;width:100%" onclick="showToast('PDF download coming soon!')">⬇ DOWNLOAD RULES PDF</button>
+        </div>
+
+        <!-- GAME LOG -->
+        <div class="info-panel">
+          <h3>GAME LOG</h3>
+          <div class="game-log" id="gameLog">
+            <div style="font-size:.8rem;color:var(--text-dim)">No activity yet. Join a table to start!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA STRIP -->
+      <div class="cta-strip">
+        <h3>READY TO PLAY?</h3>
+        <p>Create a table or join an existing one and start bluffing!</p>
+        <div class="cta-actions">
+          <button class="btn-cta-green" onclick="openCreateModal()">+ CREATE TABLE</button>
+          <button class="btn-cta-gold" onclick="quickJoin(6,1)">⚡ QUICK JOIN</button>
+        </div>
+      </div>
+
+    </div><!-- /content-area -->
+  </div><!-- /main-layout -->
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: HOW TO PLAY
+══════════════════════════════════════ -->
+<div class="page-section" id="page-howto">
+  <div style="max-width:860px;margin:0 auto;padding:40px 24px">
+    <h2 style="font-family:'Cinzel',serif;font-size:2rem;color:var(--gold);margin-bottom:6px">How to Play Pure Bluff</h2>
+    <p style="color:var(--text-dim);margin-bottom:30px">Complete worldwide rules for the Bluff (also known as Cheat) card game.</p>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:22px">
+        <h3 style="color:var(--gold);font-family:'Cinzel',serif;margin-bottom:14px">🎯 Objective</h3>
+        <p style="font-size:.9rem;color:var(--text-dim);line-height:1.7">Be the last player holding cards, or force others to collect the entire deck. Players strategically bid on card ranks while being able to bluff — claim cards they may not actually have.</p>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:22px">
+        <h3 style="color:var(--gold);font-family:'Cinzel',serif;margin-bottom:14px">🃏 Setup</h3>
+        <ul style="font-size:.9rem;color:var(--text-dim);line-height:2;padding-left:18px">
+          <li>2–6 players: use 1 standard deck (52 cards)</li>
+          <li>7–10 players: use 2 standard decks (104 cards)</li>
+          <li>Shuffle and deal all cards equally</li>
+          <li>Some players may have one extra card</li>
+        </ul>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:22px">
+        <h3 style="color:var(--gold);font-family:'Cinzel',serif;margin-bottom:14px">🔄 Turn Structure</h3>
+        <ol style="font-size:.9rem;color:var(--text-dim);line-height:2;padding-left:18px">
+          <li>Player announces: Quantity × Rank (e.g. "3 Aces")</li>
+          <li>Each bid must exceed previous (higher rank OR more quantity)</li>
+          <li>Next player: bid higher OR challenge "BLUFF!"</li>
+          <li>First bid of a round cannot be challenged</li>
+          <li>You may always increase quantity at same rank</li>
+        </ol>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:22px">
+        <h3 style="color:var(--gold);font-family:'Cinzel',serif;margin-bottom:14px">⚡ Challenge (Bluff!)</h3>
+        <ul style="font-size:.9rem;color:var(--text-dim);line-height:2;padding-left:18px">
+          <li>Any player can call BLUFF on the current bid</li>
+          <li>All cards in the central pile are revealed</li>
+          <li><strong style="color:#40c070">If bid is TRUE:</strong> challenger picks up all pile cards</li>
+          <li><strong style="color:var(--red)">If bid is FALSE:</strong> bidder picks up all pile cards</li>
+          <li>New round starts with the loser going first</li>
+        </ul>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:22px">
+        <h3 style="color:var(--gold);font-family:'Cinzel',serif;margin-bottom:14px">🏆 Winning</h3>
+        <p style="font-size:.9rem;color:var(--text-dim);line-height:1.7">The winner is the last player remaining with cards. Players are eliminated when they successfully empty their hand — but they must be called on a valid bid, or bluff successfully when called. The game continues until one player holds all the cards (they lose), or only one player has cards left (they win).</p>
+      </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:22px">
+        <h3 style="color:var(--gold);font-family:'Cinzel',serif;margin-bottom:14px">📋 Card Ranks</h3>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+          <span style="background:rgba(240,165,0,.15);border:1px solid var(--gold-dark);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem;color:var(--gold)">A</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">K</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">Q</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">J</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">10</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">9</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">8</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">7</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">6</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">5</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">4</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">3</span>
+          <span style="background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.85rem">2</span>
+        </div>
+        <p style="font-size:.78rem;color:var(--text-dim);margin-top:10px">Ace is highest, 2 is lowest. Suits are irrelevant for ranking.</p>
+      </div>
+    </div>
+    <button class="btn-cta-green" style="margin-top:28px" onclick="showPage('home')">← BACK TO GAME</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: LOBBY
+══════════════════════════════════════ -->
+<div class="page-section" id="page-lobby">
+  <div style="padding:30px 32px">
+    <h2 style="font-family:'Cinzel',serif;font-size:1.6rem;color:var(--gold);margin-bottom:18px">Game Lobby</h2>
+    <div id="lobbyTableList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: LEADERBOARD
+══════════════════════════════════════ -->
+<div class="page-section" id="page-leaderboard">
+  <div class="leaderboard-section">
+    <h2>🏆 Leaderboard</h2>
+    <table class="lb-table">
+      <thead><tr><th>#</th><th>Player</th><th>Coins</th><th>Wins</th><th>Games</th></tr></thead>
+      <tbody id="lbBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: SUPPORT
+══════════════════════════════════════ -->
+<div class="page-section" id="page-support">
+  <div style="max-width:600px;margin:0 auto;padding:40px 24px">
+    <h2 style="font-family:'Cinzel',serif;font-size:1.6rem;color:var(--gold);margin-bottom:20px">Support</h2>
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px">
+      <h4 style="color:var(--gold);margin-bottom:8px">📧 Contact Us</h4>
+      <p style="font-size:.88rem;color:var(--text-dim)">support@purebluff.game</p>
+    </div>
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px">
+      <h4 style="color:var(--gold);margin-bottom:8px">❓ FAQ</h4>
+      <p style="font-size:.88rem;color:var(--text-dim);line-height:1.7"><strong style="color:var(--text)">Can I play with friends?</strong><br>Yes! Create a private table and share the table name.<br><br><strong style="color:var(--text)">What happens on disconnect?</strong><br>You have 30 seconds to reconnect before being folded out.<br><br><strong style="color:var(--text)">Is the game fair?</strong><br>Yes — cards are dealt using a cryptographically secure RNG.</p>
+    </div>
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px">
+      <h4 style="color:var(--gold);margin-bottom:8px">🔒 Secure &amp; Fair Play</h4>
+      <p style="font-size:.88rem;color:var(--text-dim);line-height:1.6">We use advanced encryption and fair-play systems to ensure a safe and fun experience for all players.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer>
+  <div class="footer-brand">
+    <div class="name">PURE <span>BLUFF</span></div>
+    <div class="tagline">Bluff. Strategize. Win.</div>
+  </div>
+  <div class="footer-col">
+    <h6>Company</h6>
+    <a href="#">About Us</a>
+    <a href="#">Careers</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+  </div>
+  <div class="footer-col">
+    <h6>Support</h6>
+    <a href="#" onclick="showPage('support')">Help Center</a>
+    <a href="#">Contact Us</a>
+    <a href="#">FAQ</a>
+  </div>
+  <div class="footer-col">
+    <h6>Community</h6>
+    <a href="#">Discord</a>
+    <a href="#">Twitter</a>
+    <a href="#">YouTube</a>
+  </div>
+  <div class="footer-secure">
+    <strong>🔒 Secure &amp; Fair Play</strong>
+    We use advanced encryption and fair-play systems to ensure a safe and fun experience for all players.
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- CREATE TABLE MODAL -->
+<div class="modal-bg" id="createModal">
+  <div class="modal">
+    <h2>Create Table</h2>
+    <p>Set up your bluff game table.</p>
+    <label style="font-size:.82rem;color:var(--text-dim)">Table Name</label>
+    <input class="modal-input" id="newTableName" placeholder="My Bluff Table" style="margin-top:6px">
+    <label style="font-size:.82rem;color:var(--text-dim);display:block;margin-bottom:8px">Player Mode</label>
+    <div class="modal-options">
+      <div class="modal-opt selected" id="opt6" onclick="selectMode(6)">
+        <div class="opt-num">6</div>
+        <div class="opt-label">Players · 1 Deck</div>
+      </div>
+      <div class="modal-opt" id="opt10" onclick="selectMode(10)">
+        <div class="opt-num">10</div>
+        <div class="opt-label">Players · 2 Decks</div>
+      </div>
+    </div>
+    <label style="font-size:.82rem;color:var(--text-dim)">Minimum Bet (coins)</label>
+    <input class="modal-input" id="newMinBet" type="number" value="500" min="100" max="10000" style="margin-top:6px">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('createModal')">Cancel</button>
+      <button class="btn-submit" onclick="createTable()">Create Table</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="modal-bg" id="resultModal">
+  <div class="modal result-modal">
+    <div class="result-icon" id="resultIcon">🏆</div>
+    <h2 id="resultTitle">You Win!</h2>
+    <p class="result-msg" id="resultMsg"></p>
+    <p id="resultCoins" style="color:var(--gold);font-size:1rem;margin-bottom:20px"></p>
+    <div class="modal-actions" style="justify-content:center">
+      <button class="btn-cancel" onclick="closeModal('resultModal')">Close</button>
+      <button class="btn-submit" onclick="newRound()">Play Again</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHALLENGE REVEAL MODAL -->
+<div class="modal-bg" id="challengeModal">
+  <div class="modal" style="text-align:center">
+    <h2 id="challengeTitle">BLUFF CALLED!</h2>
+    <p id="challengeDesc" style="margin-bottom:8px"></p>
+    <div class="challenge-cards" id="challengeCards"></div>
+    <p id="challengeResult" style="font-size:1rem;font-weight:700;margin-top:12px"></p>
+    <div class="modal-actions" style="justify-content:center;margin-top:16px">
+      <button class="btn-submit" onclick="afterChallenge()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+/* ════════════════════════════════════════════════
+   GAME STATE & SOCKET INTEGRATION
+════════════════════════════════════════════════ */
+const RANKS = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+const SUITS = ['♠','♥','♦','♣'];
+const SUIT_COLOR = { '♠':'black','♣':'black','♥':'red','♦':'red' };
+
+const state = {
+  tables: [],
+  currentTable: null,
+  gameActive: false,
+  players: [],        // [{id, name, coins, hand, folded, isAI, seatIdx}]
+  youIdx: -1,
+  currentPlayerIdx: 0,
+  pileSize: 0,
+  currentBid: null,   // {qty, rankIdx, bidderIdx}
+  round: 0,
+  decks: 1,
+  maxPlayers: 6,
+  minBet: 500,
+  selectedCards: [], // indices of cards in you.hand
+  myHand: [],        // private hand cards
+  bidQty: 1,
+  bidRankIdx: 12,     // default Ace
+  log: [],
+};
+
+/* User profile */
+const me = { name: 'AceMaster', coins: 12450, avatar: 'AC' };
+
+// Initialize Socket.io client
+let socket;
+if (typeof io === 'undefined') {
+  // Show a friendly warning banner if opened via file:// protocol
+  document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:relative;background:#c02121;color:#fff;text-align:center;padding:12px;font-family:sans-serif;font-weight:bold;font-size:0.95rem;z-index:10000;box-shadow:0 4px 10px rgba(0,0,0,0.5);line-height:1.4;';
+    banner.innerHTML = `⚠️ <strong>Server Connection Required</strong>: It looks like you opened this HTML file directly. Please double-click <strong>StartServer.command</strong> to start the server, then visit <a href="http://localhost:3000" style="color:#ffd700;text-decoration:underline;font-weight:bold">http://localhost:3000</a> to play.`;
+    document.body.prepend(banner);
+  });
+  socket = {
+    on: () => {},
+    emit: () => {}
+  };
+} else {
+  socket = io();
+}
+
+socket.on('connect', () => {
+  showToast('Connected to game server!');
+  const savedUser = localStorage.getItem('pb_username');
+  const savedPass = localStorage.getItem('pb_password');
+  if (savedUser && savedPass) {
+    socket.emit('login', { username: savedUser, password: savedPass });
+  }
+});
+
+socket.on('disconnect', () => {
+  showToast('Disconnected from server. Retrying...');
+});
+
+socket.on('lobby_update', (tables) => {
+  state.tables = tables;
+  renderTableList();
+  renderLobby();
+  renderLeaderboard(); // Update leaderboard with active players
+});
+
+socket.on('join_success', (table) => {
+  state.currentTable = table;
+  state.maxPlayers = table.max;
+  state.decks = table.decks;
+  state.minBet = table.minBet;
+  renderTableList();
+  document.getElementById('tbTableName').textContent = table.name.toUpperCase();
+  document.getElementById('tbDecks').textContent = table.decks;
+  document.getElementById('tbMinBet').textContent = table.minBet>=1000?(table.minBet/1000)+'K':table.minBet;
+  document.getElementById('giMaxPlayers').textContent = table.max + ' with ' + table.decks + ' Deck' + (table.decks>1?'s':'');
+  
+  // Go to game tab
+  showPage('home');
+});
+
+socket.on('game_state', (gameState) => {
+  const wasMyTurn = state.gameActive && state.currentPlayerIdx === state.youIdx;
+  const prevBid = state.currentBid;
+
+  state.gameActive = gameState.gameActive;
+  state.players = gameState.players;
+  state.currentPlayerIdx = gameState.currentPlayerIdx;
+  state.currentBid = gameState.currentBid;
+  state.round = gameState.round;
+  state.pileSize = gameState.pileSize;
+  state.maxPlayers = gameState.maxPlayers;
+  state.decks = gameState.decks;
+  state.minBet = gameState.minBet;
+  state.log = gameState.log;
+  
+  // Find player index
+  state.youIdx = state.players.findIndex(p => p.id === socket.id);
+  if (state.youIdx === -1) {
+    state.youIdx = state.players.findIndex(p => p.name === me.name);
+  }
+
+  // Restore our hand from state.myHand if we are in the players list
+  if (state.youIdx !== -1 && state.players[state.youIdx]) {
+    state.players[state.youIdx].hand = state.myHand || [];
+  }
+
+  // Auto-initialize bid selectors to minimum valid bid when turn transitions to player
+  const isMyTurn = state.gameActive && state.currentPlayerIdx === state.youIdx;
+  if (isMyTurn && (!wasMyTurn || JSON.stringify(prevBid) !== JSON.stringify(state.currentBid))) {
+    if (state.currentBid) {
+      state.bidQty = state.currentBid.qty + 1;
+      state.bidRankIdx = state.currentBid.rankIdx;
+    } else {
+      state.bidQty = 1;
+      state.bidRankIdx = 12; // default Ace
+    }
+    updateBidDisplay();
+  }
+
+  // Update navbar user coins if we are in players list
+  if (state.youIdx !== -1) {
+    const you = state.players[state.youIdx];
+    me.coins = you.coins;
+    document.getElementById('userCoinsNav').textContent = me.coins.toLocaleString();
+  }
+
+  // Update UI components
+  document.getElementById('tbRound').textContent = state.gameActive ? state.round : '–';
+  document.getElementById('giStatus').textContent = state.gameActive ? 'In Progress' : 'Waiting...';
+  document.getElementById('giStatus').style.color = state.gameActive ? '#f0a500' : '#40c070';
+  
+  updateTablePlayerCount();
+  renderSeats();
+  updateCurrentBidUI();
+  renderYourHand(); // Render your hand to keep sync'd
+  updateActionButtons();
+  renderLog();
+  
+  // Trigger turn toast banner
+  if (state.gameActive && state.players[state.currentPlayerIdx]) {
+    const curr = state.players[state.currentPlayerIdx];
+    showBanner(`${curr.name}'s turn`);
+  }
+});
+
+socket.on('your_hand', (hand) => {
+  state.myHand = hand;
+  if (state.youIdx !== -1 && state.players[state.youIdx]) {
+    state.players[state.youIdx].hand = hand;
+    // Keep selection safe or filter out invalid selections
+    state.selectedCards = state.selectedCards.filter(idx => idx < hand.length);
+    renderYourHand();
+  }
+});
+
+socket.on('timer', (sec) => {
+  state.timerSec = sec;
+  document.getElementById('timerDisplay').textContent = sec + 's';
+});
+
+socket.on('challenge_reveal', (data) => {
+  const challenger = data.challengerName;
+  const bidder = data.bidderName;
+  const qty = data.bidQty;
+  const rankVal = data.bidRankVal;
+  const actualCount = data.actualCount;
+  const revealCards = data.revealCards;
+  const bidIsTrue = data.bidIsTrue;
+
+  const cardsHtml = revealCards.map((c, i) => `
+    <div class="challenge-card-reveal ${SUIT_COLOR[c.suit]==='red'?'red':''}" style="animation-delay:${i*0.08}s">
+      ${c.rank}${c.suit}
+    </div>`).join('') + (actualCount > revealCards.length ? `<span style="color:var(--text-dim);align-self:center">+${actualCount-revealCards.length} more</span>` : '');
+
+  document.getElementById('challengeTitle').textContent = `${challenger} calls BLUFF!`;
+  document.getElementById('challengeDesc').textContent = 
+    `Bid: ${qty} × ${rankVal} by ${bidder}. Revealed cards in last play:`;
+  document.getElementById('challengeCards').innerHTML = cardsHtml || '<span style="color:var(--text-dim)">No cards played!</span>';
+
+  if (bidIsTrue) {
+    document.getElementById('challengeResult').innerHTML = `<span style="color:#ff6060">❌ BID WAS TRUE! ${challenger} picks up all pile cards!</span>`;
+  } else {
+    document.getElementById('challengeResult').innerHTML = `<span style="color:#40c060">✅ BLUFF SUCCESSFUL! ${bidder} picks up all pile cards!</span>`;
+  }
+
+  document.getElementById('challengeModal').classList.add('visible');
+});
+
+socket.on('game_over', (data) => {
+  me.coins += data.prize;
+  document.getElementById('userCoinsNav').textContent = me.coins.toLocaleString();
+
+  document.getElementById('resultIcon').textContent = data.youWon ? '🏆' : '😞';
+  document.getElementById('resultTitle').textContent = data.youWon ? 'You Win!' : 'Game Over';
+  document.getElementById('resultMsg').textContent = data.youWon
+    ? `${data.loserName} is stuck with all the cards!`
+    : `You collected too many cards this round.`;
+  document.getElementById('resultCoins').textContent = (data.prize >= 0 ? '+' : '') + data.prize + ' coins';
+  document.getElementById('resultModal').classList.add('visible');
+  document.getElementById('giStatus').textContent = data.youWon ? 'You Won!' : 'Game Over';
+  document.getElementById('giStatus').style.color = data.youWon ? '#40c070' : '#e03030';
+  updateActionButtons();
+});
+
+socket.on('toast', (msg) => {
+  showToast(msg);
+});
+
+/* ── TABLE LISTS ── */
+function renderTableList() {
+  const el = document.getElementById('tableList');
+  el.innerHTML = state.tables.map(t => `
+    <div class="table-item ${state.currentTable?.id===t.id?'active':''}" onclick="joinTable(${t.id})">
+      <div>
+        <div class="table-name">${t.name}</div>
+        <div class="table-meta">Min ${t.minBet>=1000?(t.minBet/1000)+'K':t.minBet}</div>
+      </div>
+      <div class="table-count">${t.players} / ${t.max}</div>
+    </div>`).join('');
+}
+
+function renderLobby() {
+  document.getElementById('lobbyTableList').innerHTML = state.tables.map(t => `
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:18px;cursor:pointer;transition:all .2s" 
+         onmouseover="this.style.borderColor='var(--gold-dark)'" onmouseout="this.style.borderColor='var(--border)'"
+         onclick="joinTable(${t.id})">
+      <div style="font-weight:700;font-size:1rem;margin-bottom:4px">${t.name}</div>
+      <div style="font-size:.8rem;color:var(--text-dim);margin-bottom:10px">Min Bet: ${t.minBet} · ${t.decks} Deck${t.decks>1?'s':''}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="color:var(--gold);font-weight:600">${t.players}/${t.max} Players</span>
+        <button onclick="event.stopPropagation();joinTable(${t.id})" 
+          style="padding:6px 14px;border-radius:6px;background:linear-gradient(135deg,#1d7a35,#28a045);border:none;color:#fff;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.82rem">JOIN</button>
+      </div>
+    </div>`).join('');
+}
+
+function requestLeaderboard() {
+  socket.emit('get_leaderboard');
+}
+
+socket.on('leaderboard_data', (data) => {
+  document.getElementById('lbBody').innerHTML = data.map((p, i) => `
+    <tr>
+      <td class="lb-rank">${i+1}</td>
+      <td class="lb-name">${p.username === me.name ? '<span style="color:var(--gold)">'+p.username+' (You)</span>' : p.username}</td>
+      <td class="lb-coins">🪙 ${p.coins.toLocaleString()}</td>
+      <td class="lb-wins">${Math.max(1, Math.floor(p.coins / 3000))}</td>
+      <td>${Math.max(2, Math.floor(p.coins / 2000) + 5)}</td>
+    </tr>`).join('');
+});
+
+/* ── JOIN / CREATE ── */
+let createMode = 6;
+function selectMode(n) {
+  createMode = n;
+  document.getElementById('opt6').classList.toggle('selected', n===6);
+  document.getElementById('opt10').classList.toggle('selected', n===10);
+}
+
+function openCreateModal() { document.getElementById('createModal').classList.add('visible'); }
+function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
+
+function createTable() {
+  const name = document.getElementById('newTableName').value.trim() || 'My Table';
+  const minBet = parseInt(document.getElementById('newMinBet').value)||500;
+  const decks = createMode===10 ? 2 : 1;
+  socket.emit('create_table', { name, minBet, maxPlayers: createMode, decks });
+  closeModal('createModal');
+}
+
+function joinTable(id) {
+  socket.emit('join_table', id);
+}
+
+function quickJoin(max, decks) {
+  socket.emit('quick_join', { max, decks });
+}
+
+function refreshTables() {
+  socket.emit('refresh_lobby');
+}
+
+function updateTablePlayerCount() {
+  document.getElementById('tbPlayers').textContent = state.players.length + ' / ' + state.maxPlayers;
+}
+
+/* ── SEATS ── */
+function renderSeats() {
+  const table = document.getElementById('pokerTable');
+  table.querySelectorAll('.seat').forEach(e=>e.remove());
+
+  const you = state.players[state.youIdx];
+  const youSeatIdx = you ? you.seatIdx : 3;
+  const max = state.maxPlayers;
+
+  state.players.forEach((p,i) => {
+    const seat = document.createElement('div');
+    const isActive = i === state.currentPlayerIdx && state.gameActive;
+    
+    // Rotate seat so you are always at bottom center (seat 3/5 depending on mode)
+    // For 6 players: seat 3 is bottom center.
+    // For 10 players: seat 5 is bottom center.
+    const targetBottomSeat = max === 6 ? 3 : 5;
+    const renderedSeatIdx = (p.seatIdx - youSeatIdx + targetBottomSeat + max) % max;
+    const seatClass = max === 6 ? `seat-p6-${renderedSeatIdx}` : `seat-p10-${renderedSeatIdx}`;
+
+    seat.className = `seat ${seatClass}${isActive?' active':''}${p.folded?' folded':''}${i===state.youIdx?' you':''}`;
+    seat.id = `seat-${i}`;
+
+    const cardCount = p.hand ? p.hand.length : p.handSize;
+    const cards = Array.from({length:Math.min(cardCount,4)},(_,k)=>`<div class="mini-card">♠</div>`).join('');
+
+    seat.innerHTML = `
+      <div class="seat-avatar">
+        ${p.isAI ? p.name.slice(0,2).toUpperCase() : '👤'}
+        ${p.isDealer ? '<span class="dealer-btn" style="background:var(--gold)">D</span>' : ''}
+      </div>
+      <div class="seat-name">${p.name}</div>
+      <div class="seat-coins">🪙 ${p.coins.toLocaleString()}</div>
+      <div class="seat-cards">${cards}<span style="font-size:.65rem;color:var(--gold-light);margin-left:2px">${cardCount>0?'×'+cardCount:''}</span></div>`;
+    table.appendChild(seat);
+  });
+}
+
+/* ── YOUR HAND ── */
+function renderYourHand() {
+  const you = state.players[state.youIdx];
+  const el = document.getElementById('yourHand');
+  if (!you || !state.gameActive) { el.innerHTML = '<span style="color:var(--text-dim);font-size:.85rem">Join or create a table to start playing</span>'; return; }
+  if (you.folded) { el.innerHTML = '<span style="color:var(--text-dim)">You folded this round.</span>'; return; }
+  if (!you.hand || you.hand.length === 0) { el.innerHTML = '<span style="color:var(--text-dim)">Spectating or waiting for next round.</span>'; return; }
+
+  el.innerHTML = you.hand.map((c,i) => {
+    const isRed = SUIT_COLOR[c.suit]==='red';
+    const sel = state.selectedCards.includes(i);
+    return `<div class="hand-card ${isRed?'red':'black'}${sel?' selected':''}" onclick="toggleCard(${i})">
+      <span class="hand-label">${c.rank}<br>${c.suit}</span>
+      <span class="hand-suit">${c.suit}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(i) {
+  if (state.currentPlayerIdx !== state.youIdx || !state.gameActive) return;
+  const idx = state.selectedCards.indexOf(i);
+  if (idx>=0) state.selectedCards.splice(idx,1);
+  else state.selectedCards.push(i);
+  renderYourHand();
+}
+
+/* ── BID CONTROLS ── */
+function adjQty(d) {
+  state.bidQty = Math.max(1, Math.min(state.bidQty+d, 52*state.decks));
+  updateBidDisplay();
+}
+function adjRank(d) {
+  state.bidRankIdx = Math.max(0, Math.min(state.bidRankIdx+d, RANKS.length-1));
+  updateBidDisplay();
+}
+function updateBidDisplay() {
+  document.getElementById('bidDisplay').textContent = state.bidQty + ' × ♠';
+  document.getElementById('rankDisplay').textContent = RANKS[state.bidRankIdx];
+}
+
+/* ── CURRENT BID DISPLAY ── */
+function updateCurrentBidUI() {
+  const el = document.getElementById('currentBidDisplay');
+  if (state.currentBid) {
+    el.style.display='block';
+    document.getElementById('currentBidVal').textContent = state.currentBid.qty + ' × ' + RANKS[state.currentBid.rankIdx];
+  } else {
+    el.style.display='none';
+  }
+}
+
+/* ── ACTION BUTTONS ── */
+function updateActionButtons() {
+  const isYourTurn = state.currentPlayerIdx === state.youIdx && state.gameActive;
+  const you = state.players[state.youIdx];
+  const myTurn = isYourTurn && you && !you.folded && you.hand && you.hand.length > 0;
+
+  document.getElementById('btnFold').disabled  = !myTurn;
+  document.getElementById('btnCheck').disabled = !myTurn || !state.currentBid;
+  document.getElementById('btnBluff').disabled = !myTurn;
+  document.getElementById('btnBlind').disabled = !myTurn;
+}
+
+/* ── PLAYER ACTIONS ── */
+function playerBid() {
+  // Auto-select cards if they haven't selected the correct quantity
+  if (state.selectedCards.length !== state.bidQty) {
+    const you = state.players[state.youIdx];
+    if (you && you.hand) {
+      state.selectedCards = [];
+      const matchingIndices = [];
+      const otherIndices = [];
+      you.hand.forEach((card, idx) => {
+        if (card.rankIdx === state.bidRankIdx) {
+          matchingIndices.push(idx);
+        } else {
+          otherIndices.push(idx);
+        }
+      });
+      
+      const combined = [...matchingIndices, ...otherIndices];
+      state.selectedCards = combined.slice(0, Math.min(state.bidQty, you.hand.length));
+    }
+  }
+
+  if (state.selectedCards.length !== state.bidQty) {
+    showToast(`You only have ${state.players[state.youIdx]?.hand?.length || 0} cards left!`);
+    return;
+  }
+
+  if (state.currentBid) {
+    const rankIdx = state.bidRankIdx;
+    const qty = state.bidQty;
+    if (rankIdx < state.currentBid.rankIdx ||
+        (rankIdx === state.currentBid.rankIdx && qty <= state.currentBid.qty)) {
+      showToast('Bid must be higher than current bid!');
+      return;
+    }
+  }
+
+  socket.emit('place_bid', {
+    qty: state.bidQty,
+    rankIdx: state.bidRankIdx,
+    selectedIndices: state.selectedCards
+  });
+  state.selectedCards = [];
+}
+
+function openBidModal() {
+  if (state.currentBid) {
+    state.bidQty = state.currentBid.qty + 1;
+    state.bidRankIdx = state.currentBid.rankIdx;
+  } else {
+    state.bidQty = 1;
+    state.bidRankIdx = 12; // default Ace
+  }
+  updateBidDisplay();
+  showToast('Select cards in your hand, adjust bid values, then click PLACE BID');
+}
+
+function playerChallenge() {
+  socket.emit('challenge');
+}
+
+function afterChallenge() {
+  closeModal('challengeModal');
+  socket.emit('after_challenge');
+}
+
+function playerFold() {
+  socket.emit('fold');
+}
+
+function newRound() {
+  closeModal('resultModal');
+  socket.emit('play_again');
+}
+
+/* ── LOGGING ── */
+function renderLog() {
+  const el = document.getElementById('gameLog');
+  if (state.log.length === 0) {
+    el.innerHTML = '<div style="font-size:.8rem;color:var(--text-dim)">No activity yet. Join a table to start!</div>';
+    return;
+  }
+  el.innerHTML = state.log.map(e => `
+    <div class="log-entry">
+      <div class="log-avatar">${e.name.slice(0,2).toUpperCase()}</div>
+      <div class="log-body">
+        <div class="log-name">${e.name}</div>
+        <div class="log-action ${e.type || ''}">${e.action}${e.type==='success'?'<span class="badge success">SUCCESS</span>':e.type==='fail'?'<span class="badge fail">FAILED</span>':''}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── UI HELPERS ── */
+function showPage(id) {
+  document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  const navMap = {home:0,lobby:1,howto:2,leaderboard:3,support:4};
+  const links = document.querySelectorAll('.nav-links a');
+  if (navMap[id]!==undefined) links[navMap[id]]?.classList.add('active');
+  
+  if (id === 'leaderboard') {
+    requestLeaderboard();
+  }
+}
+
+function showBanner(msg) {
+  const b = document.getElementById('statusBanner');
+  b.textContent = msg; b.classList.add('show');
+  clearTimeout(b._t); b._t = setTimeout(()=>b.classList.remove('show'),2200);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* Close modals on bg click */
+document.querySelectorAll('.modal-bg').forEach(bg=>{
+  bg.addEventListener('click',e=>{ if(e.target===bg) bg.classList.remove('visible'); });
+});
+
+/* Initialize Leaderboard */
+requestLeaderboard();
+
+// ── AUTHENTICATION INTERACTION ──
+let authMode = 'login';
+function switchAuthTab(mode) {
+  authMode = mode;
+  document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
+  document.getElementById('authSubmitBtn').textContent = mode === 'login' ? 'LOG IN' : 'SIGN UP';
+  document.getElementById('authTitle').textContent = mode === 'login' ? 'LOG IN TO PLAY' : 'CREATE ACCOUNT';
+  document.getElementById('avatarSelectorContainer').style.display = mode === 'login' ? 'none' : 'block';
+  document.getElementById('authError').style.display = 'none';
+}
+
+function handleAuthSubmit(event) {
+  event.preventDefault();
+  const username = document.getElementById('authUsername').value;
+  const password = document.getElementById('authPassword').value;
+  const avatar = document.getElementById('authAvatar').value;
+
+  document.getElementById('authError').style.display = 'none';
+
+  if (authMode === 'login') {
+    socket.emit('login', { username, password });
+  } else {
+    socket.emit('register', { username, password, avatar });
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem('pb_username');
+  localStorage.removeItem('pb_password');
+  window.location.reload();
+}
+
+// Auth Socket Handlers
+socket.on('login_success', (user) => {
+  me.name = user.username;
+  me.coins = user.coins;
+  me.avatar = user.avatar;
+  
+  // Save credentials for auto-login
+  const passInput = document.getElementById('authPassword').value;
+  if (passInput) {
+    localStorage.setItem('pb_username', user.username);
+    localStorage.setItem('pb_password', passInput);
+  }
+
+  document.getElementById('userAvatarNav').textContent = me.avatar;
+  document.getElementById('userNameNav').textContent = me.name;
+  document.getElementById('userCoinsNav').textContent = me.coins.toLocaleString();
+  
+  document.getElementById('authOverlay').style.display = 'none';
+  requestLeaderboard();
+});
+
+socket.on('register_success', (user) => {
+  showToast('Registered successfully! Logging in...');
+  const passInput = document.getElementById('authPassword').value;
+  socket.emit('login', { username: user.username, password: passInput });
+});
+
+socket.on('login_error', (msg) => {
+  const errEl = document.getElementById('authError');
+  errEl.textContent = msg;
+  errEl.style.display = 'block';
+});
+</script>
+</body>
+</html>
