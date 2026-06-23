@@ -1084,7 +1084,7 @@ footer {
   </div>
 </div>
 
-<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script>
 /* ════════════════════════════════════════════════
    GAME STATE & SOCKET INTEGRATION
@@ -1119,11 +1119,11 @@ const me = { name: 'AceMaster', coins: 12450, avatar: 'AC' };
 // Initialize Socket.io client
 let socket;
 if (typeof io === 'undefined') {
-  // Show a friendly warning banner if opened via file:// protocol
+  // Fallback warning banner if socket.io client failed to load completely
   document.addEventListener('DOMContentLoaded', () => {
     const banner = document.createElement('div');
     banner.style.cssText = 'position:relative;background:#c02121;color:#fff;text-align:center;padding:12px;font-family:sans-serif;font-weight:bold;font-size:0.95rem;z-index:10000;box-shadow:0 4px 10px rgba(0,0,0,0.5);line-height:1.4;';
-    banner.innerHTML = `⚠️ <strong>Server Connection Required</strong>: It looks like you opened this HTML file directly. Please double-click <strong>StartServer.command</strong> to start the server, then visit <a href="http://localhost:3000" style="color:#ffd700;text-decoration:underline;font-weight:bold">http://localhost:3000</a> to play.`;
+    banner.innerHTML = `⚠️ <strong>Connection Error</strong>: Could not load Socket.io client script. Please check your internet connection.`;
     document.body.prepend(banner);
   });
   socket = {
@@ -1131,7 +1131,11 @@ if (typeof io === 'undefined') {
     emit: () => {}
   };
 } else {
-  socket = io();
+  // Connect dynamically: use current host in local development, or your Render/VPS URL in production
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const BACKEND_URL = isLocal ? '' : 'https://YOUR-BACKEND-URL-HERE.onrender.com';
+  
+  socket = io(BACKEND_URL);
 }
 
 socket.on('connect', () => {
