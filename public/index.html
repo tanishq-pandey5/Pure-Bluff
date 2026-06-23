@@ -1133,7 +1133,7 @@ if (typeof io === 'undefined') {
 } else {
   // Connect dynamically: use current host in local development, or your Render/VPS URL in production
   const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  const BACKEND_URL = isLocal ? '' : 'https://YOUR-BACKEND-URL-HERE.onrender.com';
+  const BACKEND_URL = isLocal ? '' : 'https://purebluff.onrender.com';
   
   socket = io(BACKEND_URL);
 }
